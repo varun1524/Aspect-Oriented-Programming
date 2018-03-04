@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe275.aop.aspect;
 
+import edu.sjsu.cmpe275.aop.TweetService;
 import edu.sjsu.cmpe275.aop.TweetServiceImpl;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -16,7 +17,7 @@ import java.net.ServerSocket;
 @Order(1)
 public class RetryAspect {
 
-//	@Autowired TweetServiceImpl tweetService;
+	@Autowired TweetService tweetService;
 
 	/*@Around("execution(public void edu.sjsu.cmpe275.aop.TweetService.*(..))")
 	public void dummyAdvice(ProceedingJoinPoint joinPoint) {
@@ -46,11 +47,10 @@ public class RetryAspect {
 			throwable.printStackTrace();
 		}
 	}*/
-
+	int noOfRetries = 0;
 	@AfterThrowing(pointcut = "execution(public void edu.sjsu.cmpe275.aop.TweetService.*(..))", throwing = "e")
 	public void dummyAdvice(JoinPoint joinPoint, IOException e){
 		String methodName = joinPoint.getSignature().getName();
-		int noOfRetries = 0;
 		System.out.printf("After exception in the method %s\n", methodName);
 		try {
 			if (e instanceof IOException) {
@@ -62,9 +62,12 @@ public class RetryAspect {
 					System.out.println("Exception in Tweet");
 					System.out.println(user);
 					System.out.println(message);
-					while(noOfRetries < 3){
-						tweetService.tweet(user, message);
+					if(noOfRetries < 3){
 						noOfRetries++;
+						tweetService.tweet(user, message);
+					}
+					else{
+						noOfRetries=0;
 					}
 				}
 				else if (methodName.equals("follow")) {
