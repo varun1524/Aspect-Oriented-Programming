@@ -84,19 +84,19 @@ public class StatsAspect {
 			System.out.printf("After the executuion of the method %s\n", joinPoint.getSignature().getName());
 			Object obj[] = joinPoint.getArgs();
 			String user = obj[0].toString();
-			String blockerUser = obj[1].toString();
-			if(stats.blockedUsers.containsKey(blockerUser)){
-				if(!stats.blockedUsers.get(blockerUser).contains(user)){
-					stats.blockedUsers.get(blockerUser).add(user);
+			String blockedUser = obj[1].toString();
+			if(stats.blockedUsers.containsKey(blockedUser)){
+				if(!stats.blockedUsers.get(blockedUser).contains(user)){
+					stats.blockedUsers.get(blockedUser).add(user);
 				}
 				else {
-					System.out.printf("User %s already blocked user %s \n", user, blockerUser);
+					System.out.printf("User %s already blocked user %s \n", user, blockedUser);
 				}
 			}
 			else {
 				HashSet<String> hs = new HashSet<String>();
 				hs.add(user);
-				stats.blockedUsers.put(blockerUser, hs);
+				stats.blockedUsers.put(blockedUser, hs);
 			}
 		}
 		catch (Exception e){
