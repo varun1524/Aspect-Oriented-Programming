@@ -71,19 +71,27 @@ public class RetryAspect {
 					}
 				}
 				else if (methodName.equals("follow")) {
-					String val1 = obj[0].toString();
-					String val2 = obj[1].toString();
+					String follower = obj[0].toString();
+					String followee = obj[1].toString();
 					System.out.println("Exception in follow");
-					while(noOfRetries < 3){
+					if(noOfRetries < 3){
 						noOfRetries++;
+						tweetService.follow(follower, followee);
+					}
+					else{
+						noOfRetries=0;
 					}
 				}
 				else if (methodName.equals("block")) {
-					String val1 = obj[0].toString();
-					String val2 = obj[1].toString();
+					String user = obj[0].toString();
+					String blockedUser = obj[1].toString();
 					System.out.println("Exception in block");
-					while(noOfRetries < 3){
+					if(noOfRetries < 3){
 						noOfRetries++;
+						tweetService.block(user, blockedUser);
+					}
+					else{
+						noOfRetries=0;
 					}
 				}
 			}
