@@ -19,7 +19,6 @@ public class StatsAspect {
 	* */
 	@AfterReturning("execution(public void edu.sjsu.cmpe275.aop.TweetService.tweet(..))")
 	public void tweetAfterAdvice(JoinPoint joinPoint) {
-//		stats.resetStats();
 		try {
 			String methodName = joinPoint.getSignature().getName();
 			System.out.printf("After the executuion of the method %s\n", methodName);
