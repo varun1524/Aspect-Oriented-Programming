@@ -22,12 +22,33 @@ public class App {
             tweeter.follow("bob", "boblo");
             tweeter.follow("alex", "bob");
             tweeter.follow("boblo", "alex");
-            tweeter.block("alex", "bob");
-            tweeter.block("alex", "boblo");
+//            tweeter.block("alex", "bob");
+//            tweeter.block("alex", "boblo");
             tweeter.block("sdvcsd", "alex");
             tweeter.block("dfvdf", "bob");
 //            stats.resetStatsAndSystem();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        try {
+//            tweeter.follow("alex", "bob");
+//            tweeter.follow("carl", "bob");
+//            tweeter.follow("bob", "alice");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+        try{
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        try{
+
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
 
