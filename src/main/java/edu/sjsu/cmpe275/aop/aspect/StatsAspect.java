@@ -1,27 +1,24 @@
 package edu.sjsu.cmpe275.aop.aspect;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
-
 import edu.sjsu.cmpe275.aop.TweetStatsImpl;
-
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 @Aspect
 @Order(0)
 public class StatsAspect {
 	@Autowired TweetStatsImpl stats;
 	@Autowired RetryAspect retryAspect;
+
+	/*
+	* Tweet details added in collection after successful execution of method
+	* */
 	@AfterReturning("execution(public void edu.sjsu.cmpe275.aop.TweetService.tweet(..))")
-	public void dummyTweetAfterAdvice(JoinPoint joinPoint) {
+	public void tweetAfterAdvice(JoinPoint joinPoint) {
 //		stats.resetStats();
 		try {
 			String methodName = joinPoint.getSignature().getName();
@@ -53,8 +50,12 @@ public class StatsAspect {
 		}
 	}
 
+
+	/*
+	* Follow details of users added in collection after successful execution of method
+	* */
 	@AfterReturning("execution(public void edu.sjsu.cmpe275.aop.TweetService.follow(..))")
-	public void dummyFollowAfterAdvice(JoinPoint joinPoint) {
+	public void followAfterAdvice(JoinPoint joinPoint) {
 		try{
 			System.out.printf("After the executuion of the method %s\n", joinPoint.getSignature().getName());
 			if(retryAspect.aspectResult){
@@ -81,6 +82,9 @@ public class StatsAspect {
 		}
 	}
 
+	/*
+	* Block details of users added in collection after successful execution of method
+	* */
 	@AfterReturning("execution(public void edu.sjsu.cmpe275.aop.TweetService.block(..))")
 	public void dummyBlockAfterAdvice(JoinPoint joinPoint) {
 		try{
