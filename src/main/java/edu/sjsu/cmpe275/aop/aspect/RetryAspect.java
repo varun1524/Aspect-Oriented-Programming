@@ -1,17 +1,12 @@
 package edu.sjsu.cmpe275.aop.aspect;
 
 import edu.sjsu.cmpe275.aop.TweetService;
-import edu.sjsu.cmpe275.aop.TweetServiceImpl;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.aspectj.lang.annotation.Around;
-
 import java.io.IOException;
-import java.net.ServerSocket;
 
 @Aspect
 @Order(1)
@@ -19,25 +14,79 @@ public class RetryAspect {
 
 	@Autowired TweetService tweetService;
 
-	/*@Around("execution(public void edu.sjsu.cmpe275.aop.TweetService.*(..))")
+	int noOfRetries = 0;
+	boolean aspectResult = false;
+
+	@Around("execution(public void edu.sjsu.cmpe275.aop.TweetService.*(..))")
 	public void dummyAdvice(ProceedingJoinPoint joinPoint) {
 		String methodName = joinPoint.getSignature().getName();
 		System.out.printf("Prior to the executuion of the method %s\n", methodName);
 		Object result = null;
 		try {
+			aspectResult = false;
 			result = joinPoint.proceed();
-			System.out.printf("Finished the executuion of the method %s with result %s\n", joinPoint.getSignature().getName(), result);
-			*//*if(e.equals("IOException")){
-				if(methodName.equals("tweet")){
-					System.out.println("Exception in Tweet");
+			aspectResult = true;
+			System.out.printf("Finished the executuion of the method %s with result %s\n", methodName, result);
+		}
+		catch (IOException ex){
+			Object[] obj = joinPoint.getArgs();
+			System.out.println("It is in IOException");
+			if (methodName.equals("tweet")) {
+				String user = obj[0].toString();
+				String message = obj[1].toString();
+				System.out.println("Exception in Tweet method");
+				System.out.println(user);
+				System.out.println(message);
+				if(noOfRetries < 3){
+					noOfRetries++;
+					try{
+						tweetService.tweet(user, message);
+					}
+					catch (Exception e){
+						e.printStackTrace();
+					}
 				}
-				else if(methodName.equals("follow")){
-
+				else{
+					noOfRetries=0;
+					aspectResult = false;
 				}
-				else if(methodName.equals("block")){
-
+			}
+			else if (methodName.equals("follow")) {
+				String follower = obj[0].toString();
+				String followee = obj[1].toString();
+				System.out.println("Exception in follow method");
+				if(noOfRetries < 3){
+					noOfRetries++;
+					try{
+						tweetService.follow(follower, followee);
+					}
+					catch (Exception e){
+						e.printStackTrace();
+					}
 				}
-			}*//*
+				else{
+					noOfRetries=0;
+					aspectResult = false;
+				}
+			}
+			else if (methodName.equals("block")) {
+				String user = obj[0].toString();
+				String blockedUser = obj[1].toString();
+				System.out.println("Exception in block method");
+				if(noOfRetries < 3){
+					noOfRetries++;
+					try{
+						tweetService.block(user, blockedUser);
+					}
+					catch (Exception e){
+						e.printStackTrace();
+					}
+				}
+				else{
+					noOfRetries=0;
+					aspectResult = false;
+				}
+			}
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -46,10 +95,10 @@ public class RetryAspect {
 		catch (Throwable throwable) {
 			throwable.printStackTrace();
 		}
-	}*/
-	int noOfRetries = 0;
-	@AfterThrowing(pointcut = "execution(public void edu.sjsu.cmpe275.aop.TweetService.*(..))", throwing = "e")
-	public void dummyAdvice(JoinPoint joinPoint, IOException e){
+	}
+
+	/*@AfterThrowing(pointcut = "execution(public void edu.sjsu.cmpe275.aop.TweetService.*(..))", throwing = "e")
+	public void dummyAdvice(JoinPoint joinPoint, IOException e) throws Throwable{
 		String methodName = joinPoint.getSignature().getName();
 		System.out.printf("After exception in the method %s\n", methodName);
 		try {
@@ -96,12 +145,9 @@ public class RetryAspect {
 				}
 			}
 		}
-		catch (Exception ex) {
+		catch (IOException ex) {
 			ex.printStackTrace();
 			System.out.printf("Aborted the executuion of the method %s\n", joinPoint.getSignature().getName());
-		} catch (Throwable throwable) {
-			System.out.printf("Throwable Aborted the executuion of the method %s\n", joinPoint.getSignature().getName());
-			throwable.printStackTrace();
 		}
-	}
+	}*/
 }
